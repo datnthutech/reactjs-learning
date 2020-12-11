@@ -1,32 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
-    Row, Col, Badge
+    Row, Col, Badge, Button
 } from 'reactstrap';
 import TodoItem from '../TodoItem';
+import TodoAdd from '../TodoAdd';
 
 const TodoList = (props) => {
-    const { tasks } = props;
+    const { tasks, addTask } = props;
+
+    const [add, setAdd] = useState(false);
+    const [currentBoard, setCurrentBoard] = useState({});
+
+
+    const showAddPop = (board) => {
+        setAdd(!add);
+        setCurrentBoard(board);
+    }
 
     function showStatus(status) {
         let color = '';
-        switch (status) {
-            case 'active':
-                color = 'danger';
-                break;
-            case 'inprogress':
-                color = 'primary';
-                break;
-            case 'pending':
-                color = 'warning';
-                break;
-            case 'done':
-                color = 'success';
-                break;
-            default:
-                color = 'light';
+        let colors = {
+            'active': 'danger',
+            'inprogress': 'primary',
+            'pending': 'warning',
+            'done': 'success'
         }
         return (
-            <Badge style={{ 'float': 'right' }} color={color}>{status}</Badge>
+            <Badge style={{ 'float': 'right' }} color={colors[status] || 'light'}>{status}</Badge>
         )
     }
 
@@ -39,6 +39,7 @@ const TodoList = (props) => {
                     tasks.map((task) => (
                         <Col key={task.id} style={{ 'margin': '10px', 'background': '#cccccc82' }}>
                             <h3 style={{ 'textAlign': 'center' }}>{task.header}</h3>
+                            <Button onClick={() => showAddPop(task)}>Add</Button>
                             {
                                 task.items.map((item) => (
                                     <TodoItem item={item} showStatus={showStatus} />
@@ -47,6 +48,7 @@ const TodoList = (props) => {
                         </Col>
                     ))
                 }
+                <TodoAdd modal={add} toggle={showAddPop} board={currentBoard} addTask={addTask} />
             </Row>
         </>
         // div end
